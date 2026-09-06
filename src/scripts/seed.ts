@@ -1,8 +1,14 @@
 import mongoose from "mongoose";
+import dns from "node:dns";
 import bcrypt from "bcryptjs";
 import { DEFAULT_COURSES } from "../lib/defaultCourses";
 import { DEFAULT_SITE_CONTACT } from "../lib/siteContact";
 import { posts as DEFAULT_BLOG_POSTS } from "../lib/blogData";
+
+// This script connects directly instead of going through `connectDB()`, so it
+// needs the same public-DNS override: the local resolver refuses the SRV
+// lookup that `mongodb+srv://` depends on (`querySrv ECONNREFUSED`).
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 const MONGODB_URI = process.env.MONGODB_URI || "";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
