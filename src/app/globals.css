@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'AlMajeedQuranic';
+  src: url('/fonts/Al Majeed Quranic Font_shiped.ttf') format('truetype');
+  font-display: swap;
+}
+
+.arabic {
+  font-family: 'AlMajeedQuranic', serif;
+  direction: rtl;
+}
+
+@theme {
+  /* Green — deep forest green from logo */
+  --color-green: #1b5e20;
+  --color-green-mid: #2e7d32;
+  --color-green-light: #388e3c;
+  --color-green-muted: #1b5e2028;
+
+  /* Keeping --color-gold aliases for backward compat */
+  --color-gold: #1b5e20;
+  --color-gold-light: #2e7d32;
+  --color-gold-dark: #0a3d0e;
+  --color-gold-muted: #1b5e2028;
+
+  /* Orange */
+  --color-accent: #FA841E;
+  --color-accent-light: #fb9a45;
+  --color-accent-hover: #e8760f;
+  --color-accent-muted: #FA841E18;
+
+  /* Teal */
+  --color-sky: #099490;
+  --color-sky-light: #0bb5b0;
+  --color-sky-muted: #09949018;
+
+  /* Backgrounds */
+  --color-black: #0d0d0d;
+  --color-black-soft: #141414;
+  --color-black-nav: #111111;
+  --color-surface: #1a1a1a;
+  --color-surface-raised: #202020;
+  --color-border: #2a2a2a;
+
+  --color-white: #ffffff;
+  --color-gray-muted: #9ca3af;
+  --color-gray-dim: #6b7280;
+
+  --font-display: "Cinzel", serif;
+  --font-body: "Lato", sans-serif;
+}
+
+html,
+body {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Gold shimmer keyframe */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease forwards;
+}
+.animate-fade-in {
+  animation: fadeIn 1s ease forwards;
+}
+.delay-200 { animation-delay: 0.2s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-800 { animation-delay: 0.8s; }
+
+.gold-shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #FA841E 0%,
+    #fb9a45 35%,
+    #fdc07a 50%,
+    #fb9a45 65%,
+    #FA841E 100%
+  );
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 5s ease-in-out infinite;
+}
+
+/* ── Global Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-black-soft);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-hover);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) var(--color-black-soft);
+}
