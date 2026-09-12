@@ -60,40 +60,64 @@ export default function HadeesSection() {
           {/* Left — label + Arabic + translation + attribution */}
           <div className="flex items-center w-full flex-col gap-5 text-center">
 
-            <h2
-              className="arabic text-[var(--color-sky)] text-2xl sm:text-4xl md:text-8xl leading-loose flex flex-wrap items-center justify-center gap-x-4"
-              aria-label={ARABIC_TEXT}
-            >
-              {ARABIC_WORDS.map((word, i) => (
-                <span
-                  key={i}
-                  aria-hidden="true"
-                  className="inline-block transition-all duration-500 ease-out"
-                  style={{
-                    opacity: i < visibleWords ? 1 : 0,
-                    transform: i < visibleWords ? "translateY(0)" : "translateY(12px)",
-                  }}
-                >
-                  {word}
-                </span>
-              ))}
-            </h2>
+            <div className="relative w-full">
+              {/* Invisible sizer reserves the fully-revealed height so the
+                  progressive word reveal never reflows/shifts the layout. */}
+              <h2
+                aria-hidden="true"
+                className="invisible arabic text-2xl sm:text-4xl md:text-8xl leading-loose flex flex-wrap items-center justify-center gap-x-4"
+              >
+                {ARABIC_WORDS.map((word, i) => (
+                  <span key={i}>{word}</span>
+                ))}
+              </h2>
 
-            <p
-              className="text-white text-base sm:text-xl md:text-3xl leading-relaxed font-medium min-h-[1.6em]"
-              aria-label={`"${TRANSLATION_TEXT}"`}
-            >
-              <span aria-hidden="true">
-                {'"'}
-                {TRANSLATION_TEXT.slice(0, typedChars)}
-                <span
-                  className={`inline-block w-[2px] h-[0.9em] bg-[var(--color-sky)] align-middle ml-0.5 ${
-                    isTyping ? "animate-pulse" : "opacity-0"
-                  }`}
-                />
-                {typedChars >= TRANSLATION_TEXT.length && '"'}
-              </span>
-            </p>
+              <h2
+                className="absolute inset-0 arabic text-[var(--color-sky)] text-2xl sm:text-4xl md:text-8xl leading-loose flex flex-wrap items-center justify-center gap-x-4"
+                aria-label={ARABIC_TEXT}
+              >
+                {ARABIC_WORDS.map((word, i) => (
+                  <span
+                    key={i}
+                    aria-hidden="true"
+                    className="inline-block transition-[opacity,transform] duration-300 ease-out"
+                    style={{
+                      opacity: i < visibleWords ? 1 : 0,
+                      transform: i < visibleWords ? "translateY(0)" : "translateY(8px)",
+                    }}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </h2>
+            </div>
+
+            <div className="relative w-full">
+              {/* Invisible sizer reserves the fully-typed height so the
+                  typewriter never reflows/shifts the layout mid-cycle. */}
+              <p
+                aria-hidden="true"
+                className="invisible text-base sm:text-xl md:text-3xl leading-relaxed font-medium"
+              >
+                {'"'}{TRANSLATION_TEXT}{'"'}
+              </p>
+
+              <p
+                className="absolute inset-0 text-white text-base sm:text-xl md:text-3xl leading-relaxed font-medium"
+                aria-label={`"${TRANSLATION_TEXT}"`}
+              >
+                <span aria-hidden="true">
+                  {'"'}
+                  {TRANSLATION_TEXT.slice(0, typedChars)}
+                  <span
+                    className={`inline-block w-[2px] h-[0.9em] bg-[var(--color-sky)] align-middle ml-0.5 ${
+                      isTyping ? "animate-pulse" : "opacity-0"
+                    }`}
+                  />
+                  {typedChars >= TRANSLATION_TEXT.length && '"'}
+                </span>
+              </p>
+            </div>
 
             <p className="text-[var(--color-sky)] text-xl font-semibold">
               Prophet Muhammad ﷺ
