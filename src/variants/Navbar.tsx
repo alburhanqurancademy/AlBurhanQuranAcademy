@@ -22,7 +22,7 @@ export default function Navbar() {
     <nav className="w-full bg-[var(--color-black-nav)] sticky top-0 z-50 border-b border-[var(--color-border)] shadow-[0_2px_16px_rgba(0,0,0,0.6)]">
       {/* Top contact strip — its own row so it never collides with the nav links */}
       <div className="w-full px-4 sm:px-6 lg:px-8 border-b border-[var(--color-border)]">
-        {/* <TopBar className="py-2" /> */}
+        <TopBar className="py-2" />
       </div>
 
       <div className="w-full px-4 sm:px-6 lg:px-8">
