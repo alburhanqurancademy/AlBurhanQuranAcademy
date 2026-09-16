@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 const stats = [
-  { target: 500, suffix: "+", label: "Students", desc: "Active learners worldwide" },
-  { target: 50, suffix: "+", label: "Teachers", desc: "Qualified Quran educators" },
+  { target: 479, suffix: "", label: "Students", desc: "Active learners worldwide" },
+  { target: 7, suffix: "", label: "Teachers", desc: "Qualified Quran educators" },
   { target: 10, suffix: "+", label: "Courses", desc: "Structured learning programs" },
 ];
 
