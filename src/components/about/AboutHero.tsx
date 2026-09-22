@@ -2,14 +2,15 @@ import Image from "next/image";
 
 export default function AboutHero() {
   return (
-    <section className="relative bg-[var(--color-black-soft)] overflow-hidden">
-      {/* Ambient background glows */}
-      <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-[var(--color-sky)]/10 blur-3xl pointer-events-none" />
+    <section className="relative bg-[var(--color-black-soft)] overflow-hidden py-20 px-4">
+      {/* Ambient background glows — keep the space feeling designed, not empty */}
+      <div className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-[var(--color-sky)]/10 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 right-0 w-[480px] h-[480px] rounded-full bg-[var(--color-accent)]/10 blur-3xl pointer-events-none" />
 
-      <div className="relative flex flex-col lg:flex-row lg:min-h-[640px]">
+      <div className="relative max-w-7xl mx-auto grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
 
         {/* Left — text */}
-        <div className="relative z-10 flex flex-col gap-6 justify-center w-full lg:w-[54%] shrink-0 px-4 sm:px-8 lg:pl-16 xl:pl-24 lg:pr-12 py-14 lg:py-24">
+        <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">
             <span className="w-8 h-[2px] bg-[var(--color-accent)]" />
             <p className="text-[var(--color-sky)] uppercase tracking-[0.3em] text-xs md:text-sm font-semibold">
@@ -37,36 +38,59 @@ export default function AboutHero() {
           </div>
         </div>
 
-        {/* Right — full-bleed CEO portrait, blended into the background */}
-        <div className="relative w-full h-[420px] sm:h-[480px] lg:h-auto lg:flex-1">
-          <Image
-            src="/Alburhan CEO.jpeg"
-            alt="Prof. H. Ateeq ur Rehman — Founder &amp; CEO, AL Burhan Quran Academy"
-            fill
-            sizes="(max-width: 1024px) 100vw, 46vw"
-            className="object-cover object-top"
-            priority
-          />
+        {/* Right — CEO portrait, shown at its true aspect ratio (no cropping) */}
+        <div className="relative flex justify-center lg:justify-end">
+          <div className="relative w-full max-w-[420px]">
 
-          {/* Brand-tinted grade for a cohesive, professional finish */}
-          <div className="absolute inset-0 mix-blend-soft-light bg-gradient-to-br from-[var(--color-sky)]/70 via-transparent to-[var(--color-accent)]/60" />
-          <div className="absolute inset-0 mix-blend-multiply bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+            {/* Offset color panels — fill the space around the photo instead of cropping it */}
+            <div className="absolute -top-5 -right-5 w-full h-full rounded-2xl bg-gradient-to-br from-[var(--color-sky)]/25 to-[var(--color-sky)]/5 pointer-events-none" />
+            <div className="absolute -bottom-5 -left-5 w-full h-full rounded-2xl bg-gradient-to-tr from-[var(--color-accent)]/25 to-[var(--color-accent)]/5 pointer-events-none" />
 
-          {/* Seam blend — fades the photo into the section background */}
-          <div className="hidden lg:block absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-[var(--color-black-soft)] to-transparent pointer-events-none" />
-          <div className="lg:hidden absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[var(--color-black-soft)]/80 to-transparent pointer-events-none" />
-          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[var(--color-black-soft)] via-[var(--color-black-soft)]/50 to-transparent pointer-events-none" />
+            {/* Dot grid accents */}
+            <div
+              className="absolute -top-8 -left-8 w-24 h-24 opacity-25 pointer-events-none"
+              style={{
+                backgroundImage: "radial-gradient(circle, var(--color-sky) 1.5px, transparent 1.5px)",
+                backgroundSize: "12px 12px",
+              }}
+            />
+            <div
+              className="absolute -bottom-8 -right-8 w-24 h-24 opacity-25 pointer-events-none"
+              style={{
+                backgroundImage: "radial-gradient(circle, var(--color-accent) 1.5px, transparent 1.5px)",
+                backgroundSize: "12px 12px",
+              }}
+            />
 
-          {/* Name badge */}
-          <div className="absolute bottom-6 left-6 right-6 sm:right-auto sm:max-w-xs backdrop-blur-md bg-black/40 border border-white/10 rounded-xl px-5 py-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[var(--color-accent)]/15 flex items-center justify-center text-[var(--color-accent)] shrink-0">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
-              </svg>
+            {/* Ambient glow directly behind the card */}
+            <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-[var(--color-sky)]/20 via-transparent to-[var(--color-accent)]/20 blur-2xl pointer-events-none" />
+
+            {/* Photo card — aspect-[3/4] matches the source image exactly, so it's never cropped */}
+            <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.55)]">
+              <Image
+                src="/Alburhan CEO.jpeg"
+                alt="Prof. H. Ateeq ur Rehman — Founder &amp; CEO, AL Burhan Quran Academy"
+                fill
+                sizes="(max-width: 1024px) 85vw, 420px"
+                className="object-cover object-center"
+                priority
+              />
+              {/* Subtle brand-tinted grade, kept inside the frame */}
+              <div className="absolute inset-0 mix-blend-soft-light bg-gradient-to-br from-[var(--color-sky)]/35 via-transparent to-[var(--color-accent)]/30 pointer-events-none" />
+              <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
             </div>
-            <div className="min-w-0">
-              <p className="text-white font-bold text-sm md:text-base leading-snug truncate">Prof. H. Ateeq ur Rehman</p>
-              <p className="text-[var(--color-accent)] text-xs font-semibold tracking-[0.15em] uppercase mt-0.5">Founder &amp; CEO</p>
+
+            {/* Floating name badge */}
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-[var(--color-surface)] border border-[var(--color-accent)]/25 rounded-xl px-5 py-4 shadow-xl flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[var(--color-accent)]/10 flex items-center justify-center text-[var(--color-accent)] shrink-0">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+                </svg>
+              </div>
+              <div className="min-w-0">
+                <p className="text-white font-bold text-sm md:text-base leading-snug truncate">Prof. H. Ateeq ur Rehman</p>
+                <p className="text-[var(--color-accent)] text-xs font-semibold tracking-[0.15em] uppercase mt-0.5">Founder &amp; CEO</p>
+              </div>
             </div>
           </div>
         </div>
