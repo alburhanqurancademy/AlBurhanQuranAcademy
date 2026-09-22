@@ -1,9 +1,8 @@
-import AboutHero from "@/components/about/AboutHero";
+import AboutHeroAlt from "@/components/about/AboutHeroAlt";
 import TeamCarousel from "@/components/about/TeamCarousel";
 import VisionCarousel from "@/components/about/VisionCarousel";
 import MissionSection from "@/components/about/MissionSection";
 import ValuesSection from "@/components/about/ValuesSection";
-import AboutHeroAlt from "@/components/about/AboutHeroAlt";
 
 export const metadata = {
   title: "About Us | AL Burhan Quran Academy",
@@ -13,7 +12,6 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <>
-      {/* <AboutHero /> */}
       <AboutHeroAlt />
       <TeamCarousel />
       <VisionCarousel />

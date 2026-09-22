@@ -65,8 +65,8 @@ export default function AboutHero() {
             {/* Ambient glow directly behind the card */}
             <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-[var(--color-sky)]/20 via-transparent to-[var(--color-accent)]/20 blur-2xl pointer-events-none" />
 
-            {/* Photo card — aspect-[3/4] matches the source image exactly, so it's never cropped */}
-            <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.55)]">
+            {/* Photo card — aspect ratio matches the source image exactly, so it's never cropped */}
+            <div className="relative w-full aspect-[1086/1222] rounded-2xl overflow-hidden border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.55)]">
               <Image
                 src="/Alburhan CEO.jpeg"
                 alt="Prof. H. Ateeq ur Rehman — Founder &amp; CEO, AL Burhan Quran Academy"
