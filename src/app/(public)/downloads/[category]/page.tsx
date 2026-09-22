@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const { category } = await params;
   const cat = downloadsData.find((c) => c.id === category);
   if (!cat) return {};
-  return { title: `${cat.name} | Downloads | Al Burhan Quran Academy`, description: cat.description };
+  return { title: `${cat.name} | Islamic Library | Al Burhan Quran Academy`, description: cat.description };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {

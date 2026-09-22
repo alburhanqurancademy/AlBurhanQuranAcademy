@@ -22,7 +22,7 @@ export default function DownloadsHero() {
         <h1 className="text-5xl md:text-6xl font-black text-white leading-tight">
           Islamic{" "}
           <span className="relative inline-block">
-            <span className="text-[var(--color-accent)]">Downloads</span>
+            <span className="text-[var(--color-accent)]">Library</span>
           </span>
         </h1>
 

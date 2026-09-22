@@ -15,7 +15,7 @@ export default function CategoryPdfs({ category }: { category: DownloadCategory 
         <div className="absolute inset-0 flex items-end">
           <div className="max-w-7xl mx-auto w-full px-4 pb-10">
             <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
-              <Link href="/downloads" className="hover:text-[var(--color-accent)] transition-colors">Downloads</Link>
+              <Link href="/downloads" className="hover:text-[var(--color-accent)] transition-colors">Islamic Library</Link>
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>

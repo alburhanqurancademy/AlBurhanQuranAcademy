@@ -8,7 +8,7 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Courses", href: "/courses" },
-  { label: "Downloads", href: "/downloads" },
+  { label: "Islamic Library", href: "/downloads" },
   { label: "Blog", href: "/blogs" },
   { label: "Contact", href: "/contact" },
   { label: "FAQs", href: "/faq" },
