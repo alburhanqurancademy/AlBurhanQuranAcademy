@@ -2,6 +2,7 @@
 
 import { useSiteContact } from "@/hooks/useSiteContact";
 import { waHref } from "@/lib/siteContact";
+import ContactValue from "@/components/ContactValue";
 
 export default function FloatingContact() {
   const { contact } = useSiteContact();
@@ -11,7 +12,7 @@ export default function FloatingContact() {
       {/* Call */}
       <div className="group relative flex items-center">
         <span className="absolute right-16 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-lg">
-          {contact.phone}
+          <ContactValue value={contact?.phone} width="w-28" />
           <span className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-4 border-transparent border-l-gray-900" />
         </span>
         <a
@@ -28,11 +29,11 @@ export default function FloatingContact() {
       {/* WhatsApp */}
       <div className="group relative flex items-center">
         <span className="absolute right-16 bg-gray-900 text-white text-xs font-medium px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-lg">
-          {contact.whatsapp}
+          <ContactValue value={contact?.whatsapp} width="w-28" />
           <span className="absolute right-[-4px] top-1/2 -translate-y-1/2 border-4 border-transparent border-l-gray-900" />
         </span>
         <a
-          href={waHref(contact.whatsapp)}
+          href={contact ? waHref(contact.whatsapp) : undefined}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="WhatsApp us"

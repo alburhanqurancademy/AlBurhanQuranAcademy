@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSiteContact } from "@/hooks/useSiteContact";
 import { telHref, waHref } from "@/lib/siteContact";
+import ContactValue from "@/components/ContactValue";
 
 const courses = [
   "Quranic Qaidah",
@@ -26,8 +27,9 @@ export default function ContactSection() {
       ),
       color: "sky",
       label: "Call — USA",
-      value: contact.phone,
-      href: telHref(contact.phone),
+      value: contact?.phone,
+      href: contact ? telHref(contact.phone) : undefined,
+      width: "w-36",
     },
     {
       icon: (
@@ -37,8 +39,9 @@ export default function ContactSection() {
       ),
       color: "whatsapp",
       label: "WhatsApp",
-      value: contact.whatsapp,
-      href: waHref(contact.whatsapp),
+      value: contact?.whatsapp,
+      href: contact ? waHref(contact.whatsapp) : undefined,
+      width: "w-36",
     },
     {
       icon: (
@@ -49,8 +52,9 @@ export default function ContactSection() {
       ),
       color: "accent",
       label: "Email",
-      value: contact.email,
+      value: contact?.email,
       href: "/contact",
+      width: "w-44",
     },
   ];
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -117,7 +121,7 @@ export default function ContactSection() {
           <div className="lg:col-span-2 flex flex-col gap-6">
 
             {/* Info cards */}
-            {contactInfo.map(({ icon, color, label, value, href }) => (
+            {contactInfo.map(({ icon, color, label, value, href, width }) => (
               <a
                 key={label}
                 href={href}
@@ -138,7 +142,7 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs uppercase tracking-wider mb-0.5">{label}</p>
-                  <p className="text-white font-semibold text-sm">{value}</p>
+                  <p className="text-white font-semibold text-sm"><ContactValue value={value} width={width} /></p>
                 </div>
                 <svg className="w-4 h-4 text-gray-600 group-hover:text-[var(--color-sky)] ml-auto transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />

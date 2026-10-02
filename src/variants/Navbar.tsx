@@ -7,6 +7,7 @@ import TopBar from "@/variants/TopBar";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
+  { label: "Our Team", href: "/team" },
   { label: "Courses", href: "/courses" },
   { label: "Islamic Library", href: "/downloads" },
   { label: "Blog", href: "/blogs" },

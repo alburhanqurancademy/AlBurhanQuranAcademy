@@ -1,5 +1,5 @@
 import AboutHeroAlt from "@/components/about/AboutHeroAlt";
-import TeamCarousel from "@/components/about/TeamCarousel";
+import StatsSection from "@/components/StatsSection";
 import VisionCarousel from "@/components/about/VisionCarousel";
 import MissionSection from "@/components/about/MissionSection";
 import ValuesSection from "@/components/about/ValuesSection";
@@ -13,7 +13,7 @@ export default function AboutPage() {
   return (
     <>
       <AboutHeroAlt />
-      <TeamCarousel />
+      <StatsSection />
       <VisionCarousel />
       <MissionSection />
       <ValuesSection />

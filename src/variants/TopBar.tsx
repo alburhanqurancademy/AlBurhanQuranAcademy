@@ -2,6 +2,7 @@
 
 import { useSiteContact } from "@/hooks/useSiteContact";
 import { telHref, waHref } from "@/lib/siteContact";
+import ContactValue from "@/components/ContactValue";
 
 type TopBarProps = {
   className?: string;
@@ -25,10 +26,10 @@ export default function TopBar({ className = "" }: TopBarProps) {
                 </svg>
               </div>
               <a
-                href={telHref(contact.phone)}
+                href={contact ? telHref(contact.phone) : undefined}
                 className="hover:text-[var(--color-sky)] transition-all duration-300 font-medium group-hover:translate-x-1"
               >
-                USA / Canada: {contact.phone}
+                USA / Canada: <ContactValue value={contact?.phone} width="w-32" />
               </a>
             </div>
 
@@ -40,12 +41,12 @@ export default function TopBar({ className = "" }: TopBarProps) {
                 </svg>
               </div>
               <a
-                href={waHref(contact.whatsapp)}
+                href={contact ? waHref(contact.whatsapp) : undefined}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-[#25D366] transition-all duration-300 font-medium group-hover:translate-x-1"
               >
-                WhatsApp: {contact.whatsapp}
+                WhatsApp: <ContactValue value={contact?.whatsapp} width="w-32" />
               </a>
             </div>
 
@@ -61,7 +62,7 @@ export default function TopBar({ className = "" }: TopBarProps) {
                 href="/contact"
                 className="hover:text-[var(--color-sky)] transition-all duration-300 font-medium group-hover:translate-x-1"
               >
-                {contact.email}
+                <ContactValue value={contact?.email} width="w-48" />
               </a>
             </div>
           </div>
@@ -69,7 +70,7 @@ export default function TopBar({ className = "" }: TopBarProps) {
           {/* Mobile / Tablet Contact Quick Links */}
           <div className="flex lg:hidden items-center flex-wrap gap-1.5 text-[10px] text-[var(--color-gray-muted)]">
             <a
-              href={telHref(contact.phone)}
+              href={contact ? telHref(contact.phone) : undefined}
               className="flex items-center gap-1 rounded-full bg-[var(--color-accent)]/10 px-2 py-1 transition-all duration-300 hover:bg-[var(--color-accent)]/20"
             >
               <svg className="w-3.5 h-3.5 fill-[var(--color-accent)]" viewBox="0 0 24 24">
@@ -78,7 +79,7 @@ export default function TopBar({ className = "" }: TopBarProps) {
               <span className="font-medium">Call</span>
             </a>
             <a
-              href={waHref(contact.whatsapp)}
+              href={contact ? waHref(contact.whatsapp) : undefined}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 rounded-full bg-[#25D366]/10 px-2 py-1 transition-all duration-300 hover:bg-[#25D366]/20"

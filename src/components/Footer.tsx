@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSiteContact } from "@/hooks/useSiteContact";
 import { telHref, waHref } from "@/lib/siteContact";
+import ContactValue from "@/components/ContactValue";
 
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
+  { label: "Our Team", href: "/team" },
   { label: "Courses", href: "/courses" },
   { label: "Downloads", href: "/downloads" },
   { label: "Blog", href: "/blogs" },
@@ -81,13 +83,13 @@ export default function Footer() {
               ...socials,
               {
                 label: "Call",
-                href: telHref(contact.phone),
+                href: contact ? telHref(contact.phone) : undefined,
                 hoverColor: "hover:text-[var(--color-sky)]",
                 icon: <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z" />,
               },
               {
                 label: "WhatsApp",
-                href: waHref(contact.whatsapp),
+                href: contact ? waHref(contact.whatsapp) : undefined,
                 hoverColor: "hover:text-[#25D366]",
                 icon: <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.859L.057 23.492a.5.5 0 0 0 .6.6l5.699-1.484A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.65-.502-5.17-1.378l-.371-.214-3.384.881.9-3.312-.229-.381A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />,
               },
@@ -154,7 +156,7 @@ export default function Footer() {
           </div>
           <ul className="flex flex-col gap-4">
             <li>
-              <a href={telHref(contact.phone)} className="group flex items-start gap-3 text-gray-400 text-sm hover:text-white transition-colors">
+              <a href={contact ? telHref(contact.phone) : undefined} className="group flex items-start gap-3 text-gray-400 text-sm hover:text-white transition-colors">
                 <div className="w-8 h-8 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center shrink-0 group-hover:border-[var(--color-sky)]/40 transition-colors">
                   <svg className="w-4 h-4 fill-[var(--color-accent)]" viewBox="0 0 24 24">
                     <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z" />
@@ -162,12 +164,12 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs uppercase tracking-wider mb-0.5">USA</p>
-                  <p>{contact.phone}</p>
+                  <p><ContactValue value={contact?.phone} width="w-32" /></p>
                 </div>
               </a>
             </li>
             <li>
-              <a href={waHref(contact.whatsapp)} target="_blank" rel="noopener noreferrer" className="group flex items-start gap-3 text-gray-400 text-sm hover:text-white transition-colors">
+              <a href={contact ? waHref(contact.whatsapp) : undefined} target="_blank" rel="noopener noreferrer" className="group flex items-start gap-3 text-gray-400 text-sm hover:text-white transition-colors">
                 <div className="w-8 h-8 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center shrink-0 group-hover:border-[#25D366]/40 transition-colors">
                   <svg className="w-4 h-4 fill-[#25D366]" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.859L.057 23.492a.5.5 0 0 0 .6.6l5.699-1.484A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.65-.502-5.17-1.378l-.371-.214-3.384.881.9-3.312-.229-.381A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />
@@ -175,7 +177,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs uppercase tracking-wider mb-0.5">WhatsApp</p>
-                  <p>{contact.whatsapp}</p>
+                  <p><ContactValue value={contact?.whatsapp} width="w-32" /></p>
                 </div>
               </a>
             </li>
@@ -189,7 +191,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs uppercase tracking-wider mb-0.5">Email</p>
-                  <p>{contact.email}</p>
+                  <p><ContactValue value={contact?.email} width="w-44" /></p>
                 </div>
               </a>
             </li>

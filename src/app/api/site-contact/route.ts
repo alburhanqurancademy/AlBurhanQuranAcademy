@@ -3,6 +3,8 @@ import { connectDB } from "@/lib/mongodb";
 import { SiteContact } from "@/models/SiteContact";
 import { requireAdmin } from "@/lib/courses";
 import { DEFAULT_SITE_CONTACT, PHONE_PATTERN, EMAIL_PATTERN } from "@/lib/siteContact";
+import { SITE_CONTACT_TAG } from "@/lib/siteContactServer";
+import { revalidateTag } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -69,6 +71,11 @@ export async function PUT(req: NextRequest) {
     const contact = await getOrCreateContact();
     Object.assign(contact, updates);
     await contact.save();
+
+    // Purge the cached copy the server-rendered header/footer read from, with
+    // `expire: 0` so the new details go live immediately rather than after a
+    // stale-while-revalidate pass.
+    revalidateTag(SITE_CONTACT_TAG, { expire: 0 });
 
     return NextResponse.json({ message: "Contact info updated", contact });
   } catch (error) {

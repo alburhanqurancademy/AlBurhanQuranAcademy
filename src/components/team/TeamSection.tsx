@@ -51,9 +51,9 @@ const team = [
   },
 ];
 
-export default function TeamCarousel() {
+export default function TeamSection() {
   return (
-    <section className="relative bg-[var(--color-black-soft)] py-24 overflow-hidden">
+    <section className="relative bg-[var(--color-black-soft)] pt-10 pb-24 overflow-hidden">
 
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
@@ -62,24 +62,6 @@ export default function TeamCarousel() {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4">
-
-        {/* Heading */}
-        <div className="text-center mb-16">
-          <p className="text-[var(--color-accent)] text-xs font-bold tracking-[0.3em] uppercase mb-3">
-            The People Behind the Mission
-          </p>
-          <h2 className="text-4xl md:text-5xl font-black text-white">
-            Meet Our <span className="text-[var(--color-accent)]">Team</span>
-          </h2>
-          <div className="flex items-center justify-center gap-3 mt-5">
-            <div className="h-px w-16 bg-gradient-to-r from-transparent to-[var(--color-sky)]" />
-            <div className="w-2 h-2 rounded-full bg-[var(--color-accent)]" />
-            <div className="h-px w-16 bg-gradient-to-l from-transparent to-[var(--color-sky)]" />
-          </div>
-          <p className="text-gray-400 mt-5 text-base max-w-xl mx-auto leading-relaxed">
-            Dedicated scholars and educators committed to guiding every student on their Quranic journey.
-          </p>
-        </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

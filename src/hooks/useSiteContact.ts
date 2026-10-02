@@ -1,29 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { DEFAULT_SITE_CONTACT, type SiteContactInfo } from "@/lib/siteContact";
+import { useSiteContactContext } from "@/components/SiteContactProvider";
 
-// Returns the site contact details managed from the admin dashboard,
-// falling back to the built-in defaults while loading or on error.
+// Returns the site contact details managed from the admin dashboard. The value
+// is server-rendered by the public layout, so it is normally correct on first
+// paint; `contact` is null (and `loading` true) only while it is still being
+// fetched. Render <ContactValue /> for the text so that shows a placeholder.
 export function useSiteContact() {
-  const [contact, setContact] = useState<SiteContactInfo>(DEFAULT_SITE_CONTACT);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/site-contact")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.contact?.phone && d.contact?.whatsapp && d.contact?.email) {
-          setContact({
-            phone: d.contact.phone,
-            whatsapp: d.contact.whatsapp,
-            email: d.contact.email,
-          });
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  return { contact, loading };
+  return useSiteContactContext();
 }
