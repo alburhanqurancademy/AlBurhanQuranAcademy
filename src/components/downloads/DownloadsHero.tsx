@@ -1,3 +1,5 @@
+import IslamicPatternOverlay from "@/components/IslamicPatternOverlay";
+
 export default function DownloadsHero() {
   return (
     <section className="relative overflow-hidden bg-[var(--color-black-soft)] py-20 px-4">
@@ -5,10 +7,10 @@ export default function DownloadsHero() {
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-accent)]/8 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--color-sky)]/8 rounded-full blur-3xl" />
-        <div className="absolute inset-0 opacity-[0.2]"
-          style={{ backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)", backgroundSize: "28px 28px" }}
-        />
       </div>
+
+      {/* Shared Islamic line pattern */}
+      <IslamicPatternOverlay opacity={0.1} size={76} />
 
       <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center gap-6">
         {/* Badge */}
