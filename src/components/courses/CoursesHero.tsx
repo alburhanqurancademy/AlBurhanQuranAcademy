@@ -1,9 +1,13 @@
 import Image from "next/image";
+import IslamicPatternOverlay from "@/components/IslamicPatternOverlay";
 
 export default function CoursesHero() {
   return (
-    <section className="bg-[var(--color-black-soft)] py-20 px-4">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-14 items-center">
+    <section className="relative bg-[var(--color-black-soft)] py-20 px-4">
+      {/* Shared Islamic line pattern */}
+      <IslamicPatternOverlay opacity={0.1} size={76} />
+
+      <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-14 items-center">
 
         {/* Left — text */}
         <div className="flex flex-col gap-6">

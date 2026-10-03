@@ -1,17 +1,13 @@
 import Image from "next/image";
+import IslamicPatternOverlay from "@/components/IslamicPatternOverlay";
 
 export default function AboutHeroAlt() {
   return (
     <section className="relative bg-[var(--color-black-soft)] overflow-hidden py-20 px-4">
-      {/* Subtle geometric line backdrop */}
-      <div
-        className="absolute inset-0 opacity-[0.07] pointer-events-none"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(135deg, var(--color-sky) 0px, var(--color-sky) 1px, transparent 1px, transparent 64px)",
-        }}
-      />
       <div className="absolute top-0 left-0 w-[520px] h-[520px] rounded-full bg-[var(--color-sky)]/10 blur-3xl pointer-events-none" />
+
+      {/* Shared Islamic line pattern */}
+      <IslamicPatternOverlay opacity={0.1} size={76} />
 
       <div className="relative max-w-7xl mx-auto grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
 

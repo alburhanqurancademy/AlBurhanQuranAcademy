@@ -1,3 +1,4 @@
+import FaqHero from "@/components/faq/FaqHero";
 import FaqSection from "@/components/faq/FaqSection";
 
 export const metadata = {
@@ -6,5 +7,10 @@ export const metadata = {
 };
 
 export default function FaqPage() {
-  return <FaqSection />;
+  return (
+    <>
+      <FaqHero />
+      <FaqSection />
+    </>
+  );
 }

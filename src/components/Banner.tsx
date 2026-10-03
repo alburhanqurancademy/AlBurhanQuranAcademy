@@ -4,6 +4,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { useCallback, useEffect, useState } from "react";
 import Button from "./Button";
+import IslamicPatternOverlay from "./IslamicPatternOverlay";
 
 const slides = [
   { src: "/banner1.jpeg", tag: "Learn, Recite, Understand" },
@@ -40,6 +41,9 @@ export default function Banner() {
           ))}
         </div>
       </div>
+
+      {/* Shared Islamic line pattern */}
+      <IslamicPatternOverlay opacity={0.1} size={76} className="z-10" />
 
       {/* Content */}
       <div className="relative z-20 flex items-center justify-center min-h-[90vh]">

@@ -131,27 +131,8 @@ export default function FaqSection() {
   const c = colorMap[active.color];
 
   return (
-    <section className="relative overflow-hidden bg-[var(--color-black)] py-20 px-4">
-      <div
-        className="absolute inset-0 opacity-[0.1] pointer-events-none"
-        style={{ backgroundImage: "radial-gradient(circle, #ffffff 1px, transparent 1px)", backgroundSize: "28px 28px" }}
-      />
-
+    <section className="relative overflow-hidden bg-[var(--color-black)] pt-10 pb-20 px-4">
       <div className="relative z-10 max-w-4xl mx-auto">
-
-        {/* Heading */}
-        <div className="text-center mb-12">
-          <span className="inline-block text-xs font-bold uppercase tracking-widest text-[var(--color-accent)] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-4 py-1.5 rounded-full mb-4">
-            Got Questions?
-          </span>
-          <h2 className="text-4xl md:text-5xl font-black text-white">
-            Frequently Asked <span className="text-[var(--color-accent)]">Questions</span>
-          </h2>
-          <p className="text-gray-400 text-sm mt-4 max-w-xl mx-auto leading-relaxed">
-            Everything you need to know about our courses, teachers, and online classes. Can&apos;t find an answer?{" "}
-            <a href="/contact" className="text-[var(--color-accent)] hover:underline">Contact us</a>.
-          </p>
-        </div>
 
         {/* Category tabs */}
         <div className="flex flex-col sm:flex-row gap-3 mb-10">
