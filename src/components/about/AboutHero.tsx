@@ -1,11 +1,13 @@
 import Image from "next/image";
+import IslamicPatternOverlay from "@/components/IslamicPatternOverlay";
 
-export default function AboutHero() {
+export default function AboutHeroAlt() {
   return (
-    <section className="relative bg-[var(--color-black-soft)] overflow-hidden py-20 px-4">
-      {/* Ambient background glows — keep the space feeling designed, not empty */}
-      <div className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-[var(--color-sky)]/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 right-0 w-[480px] h-[480px] rounded-full bg-[var(--color-accent)]/10 blur-3xl pointer-events-none" />
+    <section className="relative bg-[var(--color-black-soft)] overflow-hidden py-5 px-4">
+      <div className="absolute top-0 left-0 w-[520px] h-[520px] rounded-full bg-[var(--color-sky)]/10 blur-3xl pointer-events-none" />
+
+      {/* Shared Islamic line pattern */}
+      <IslamicPatternOverlay opacity={0.1} size={76} />
 
       <div className="relative max-w-7xl mx-auto grid lg:grid-cols-[1.05fr_1fr] gap-14 items-center">
 
@@ -38,58 +40,46 @@ export default function AboutHero() {
           </div>
         </div>
 
-        {/* Right — CEO portrait, shown at its true aspect ratio (no cropping) */}
+        {/* Right — CEO portrait */}
         <div className="relative flex justify-center lg:justify-end">
-          <div className="relative w-full max-w-[420px]">
+          <div className="relative w-full max-w-[400px] mt-8 mb-10">
 
-            {/* Offset color panels — fill the space around the photo instead of cropping it */}
-            <div className="absolute -top-5 -right-5 w-full h-full rounded-2xl bg-gradient-to-br from-[var(--color-sky)]/25 to-[var(--color-sky)]/5 pointer-events-none" />
-            <div className="absolute -bottom-5 -left-5 w-full h-full rounded-2xl bg-gradient-to-tr from-[var(--color-accent)]/25 to-[var(--color-accent)]/5 pointer-events-none" />
+            {/* Rotated accent card behind the photo — dynamic, stacked-photograph feel */}
+            <div className="absolute inset-0 rounded-2xl bg-[var(--color-accent)]/90 rotate-3 pointer-events-none" />
+            <div className="absolute inset-0 rounded-2xl border-2 border-[var(--color-sky)]/50 -rotate-2 pointer-events-none" />
 
-            {/* Dot grid accents */}
-            <div
-              className="absolute -top-8 -left-8 w-24 h-24 opacity-25 pointer-events-none"
-              style={{
-                backgroundImage: "radial-gradient(circle, var(--color-sky) 1.5px, transparent 1.5px)",
-                backgroundSize: "12px 12px",
-              }}
-            />
-            <div
-              className="absolute -bottom-8 -right-8 w-24 h-24 opacity-25 pointer-events-none"
-              style={{
-                backgroundImage: "radial-gradient(circle, var(--color-accent) 1.5px, transparent 1.5px)",
-                backgroundSize: "12px 12px",
-              }}
-            />
+            {/* Large quote-mark watermark, personal-brand accent */}
+            <svg
+              className="absolute -top-10 -right-8 w-20 h-20 text-[var(--color-sky)]/25 pointer-events-none"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
+            </svg>
 
-            {/* Ambient glow directly behind the card */}
-            <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-[var(--color-sky)]/20 via-transparent to-[var(--color-accent)]/20 blur-2xl pointer-events-none" />
-
-            {/* Photo card — aspect ratio matches the source image exactly, so it's never cropped */}
-            <div className="relative w-full aspect-[1086/1222] rounded-2xl overflow-hidden border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.55)]">
+            {/* Photo card — aspect ratio matches the source image exactly, never cropped */}
+            <div className="relative w-full aspect-[1086/1500] rounded-2xl overflow-hidden border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.55)]">
               <Image
                 src="/Alburhan CEO.jpeg"
                 alt="Prof. H. Ateeq ur Rehman — Founder &amp; CEO, AL Burhan Quran Academy"
                 fill
-                sizes="(max-width: 1024px) 85vw, 420px"
+                sizes="(max-width: 1024px) 85vw, 400px"
                 className="object-cover object-center"
                 priority
               />
-              {/* Subtle brand-tinted grade, kept inside the frame */}
-              <div className="absolute inset-0 mix-blend-soft-light bg-gradient-to-br from-[var(--color-sky)]/35 via-transparent to-[var(--color-accent)]/30 pointer-events-none" />
-              <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/55 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 mix-blend-soft-light bg-gradient-to-t from-[var(--color-accent)]/40 via-transparent to-[var(--color-sky)]/30 pointer-events-none" />
             </div>
 
-            {/* Floating name badge */}
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-[var(--color-surface)] border border-[var(--color-accent)]/25 rounded-xl px-5 py-4 shadow-xl flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[var(--color-accent)]/10 flex items-center justify-center text-[var(--color-accent)] shrink-0">
+            {/* Side name badge — runs along the bottom edge, overlapping the accent card */}
+            <div className="absolute -bottom-8 -left-6 bg-[var(--color-surface)] border border-white/10 rounded-xl px-5 py-4 shadow-xl flex items-center gap-3 max-w-[85%]">
+              <div className="w-10 h-10 rounded-lg bg-[var(--color-sky)]/15 flex items-center justify-center text-[var(--color-sky)] shrink-0">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.636 50.636 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
                 </svg>
               </div>
               <div className="min-w-0">
                 <p className="text-white font-bold text-sm md:text-base leading-snug truncate">Prof. H. Ateeq ur Rehman</p>
-                <p className="text-[var(--color-accent)] text-xs font-semibold tracking-[0.15em] uppercase mt-0.5">Founder &amp; CEO</p>
+                <p className="text-[var(--color-sky)] text-xs font-semibold tracking-[0.15em] uppercase mt-0.5">Founder &amp; CEO</p>
               </div>
             </div>
           </div>

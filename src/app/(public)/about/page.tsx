@@ -1,4 +1,4 @@
-import AboutHeroAlt from "@/components/about/AboutHeroAlt";
+import AboutHero from "@/components/about/AboutHero";
 import StatsSection from "@/components/StatsSection";
 import VisionCarousel from "@/components/about/VisionCarousel";
 import MissionSection from "@/components/about/MissionSection";
@@ -12,7 +12,7 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <>
-      <AboutHeroAlt />
+      <AboutHero />
       <StatsSection />
       <VisionCarousel />
       <MissionSection />
