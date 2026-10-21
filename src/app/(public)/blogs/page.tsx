@@ -28,7 +28,7 @@ export default async function BlogPage() {
       <section className="bg-[var(--color-black)] pt-14 pb-20 px-4">
         <div className="max-w-7xl mx-auto">
           {!featured ? (
-            <p className="text-center text-gray-400 text-sm py-16">No articles published yet. Check back soon!</p>
+            <p className="text-center text-gray-400 text-lg font-semibold py-16">No Blogs Available</p>
           ) : (
             <>
               <Link href={`/blogs/${featured.slug}`} className="group block mb-12">

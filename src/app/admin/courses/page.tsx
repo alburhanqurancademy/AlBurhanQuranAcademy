@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Pagination from "@/components/admin/Pagination";
 import ConfirmDeleteModal from "@/components/admin/ConfirmDeleteModal";
 import TableSkeleton from "@/components/admin/TableSkeleton";
+import { IMAGE_RULE_TEXT, validateImageFile } from "@/lib/imageRules";
 
 interface CourseRow {
   _id: string;
@@ -254,7 +255,7 @@ function CourseModal({ course, onClose, onSaved }: { course?: CourseRow; onClose
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
@@ -262,6 +263,12 @@ function CourseModal({ course, onClose, onSaved }: { course?: CourseRow; onClose
 
     if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)) {
       setError("Only JPG, PNG, WEBP or GIF images are allowed.");
+      return;
+    }
+
+    const imageError = await validateImageFile(file);
+    if (imageError) {
+      setError(imageError);
       return;
     }
 
@@ -404,7 +411,7 @@ function CourseModal({ course, onClose, onSaved }: { course?: CourseRow; onClose
                   >
                     {preview ? "Change Image" : "Upload Image"}
                   </button>
-                  <p className="text-gray-500 text-xs">JPG, PNG, WEBP or GIF.</p>
+                  <p className="text-gray-500 text-xs">JPG, PNG, WEBP or GIF — exactly {IMAGE_RULE_TEXT}.</p>
                 </div>
                 <input
                   ref={fileInputRef}

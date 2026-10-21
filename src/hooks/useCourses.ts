@@ -1,6 +1,5 @@
 "use client";
 
-import { DEFAULT_COURSES } from "@/lib/defaultCourses";
 import { useEffect, useState } from "react";
 
 export interface PublicCourse {
@@ -31,7 +30,7 @@ interface ApiCourse {
 // exactly what the backend has (including genuinely empty, if there are no
 // active courses), same as how published blogs are sourced.
 export function useCourses() {
-  const [courses, setCourses] = useState<PublicCourse[]>(DEFAULT_COURSES);
+  const [courses, setCourses] = useState<PublicCourse[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

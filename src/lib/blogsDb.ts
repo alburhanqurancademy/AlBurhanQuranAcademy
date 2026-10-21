@@ -1,6 +1,23 @@
 import { connectDB } from "@/lib/mongodb";
 import { Blog } from "@/models/Blog";
-import { posts as defaultPosts, getPost as getDefaultPost, type BlogPost } from "@/lib/blogData";
+
+export interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  category: string;
+  readTime: string;
+  date: string;
+  sections: {
+    heading?: string;
+    body: string;
+    arabic?: string;
+    arabicRef?: string;
+    translation?: string;
+    list?: string[];
+  }[];
+}
 
 interface BlogDoc {
   slug: string;
@@ -53,32 +70,26 @@ function mapDbPost(doc: BlogDoc): BlogPost {
   };
 }
 
-// Published posts, newest first. Falls back to the built-in static articles
-// when the blogs collection is empty (not seeded yet) or the DB is unreachable.
+// Published posts, newest first. No hardcoded fallback — an empty or
+// unreachable database yields an empty list.
 export async function getPublishedPosts(): Promise<BlogPost[]> {
   try {
     await connectDB();
-    const total = await Blog.countDocuments();
-    if (total === 0) return defaultPosts;
-
     const docs = await Blog.find({ status: "published" }).sort({ createdAt: -1 }).lean<BlogDoc[]>();
     return docs.map(mapDbPost);
   } catch (error) {
-    console.error("Failed to fetch published blogs, using defaults", error);
-    return defaultPosts;
+    console.error("Failed to fetch published blogs", error);
+    return [];
   }
 }
 
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | undefined> {
   try {
     await connectDB();
-    const total = await Blog.countDocuments();
-    if (total === 0) return getDefaultPost(slug);
-
     const doc = await Blog.findOne({ slug, status: "published" }).lean<BlogDoc | null>();
     return doc ? mapDbPost(doc) : undefined;
   } catch (error) {
-    console.error("Failed to fetch blog by slug, using defaults", error);
-    return getDefaultPost(slug);
+    console.error("Failed to fetch blog by slug", error);
+    return undefined;
   }
 }

@@ -1,5 +1,6 @@
 import { Blog } from "@/models/Blog";
 import { slugify, ALLOWED_IMAGE_TYPES } from "@/lib/courses";
+import { validateImageBytes } from "@/lib/imageRules";
 
 export interface BlogSectionInput {
   heading?: string;
@@ -87,6 +88,8 @@ export async function parseBlogForm(formData: FormData): Promise<BlogFormResult>
     if (!ALLOWED_IMAGE_TYPES.includes(file.type))
       return { ok: false, message: "Only JPG, PNG, WEBP or GIF images are allowed" };
     const buffer = Buffer.from(await file.arrayBuffer());
+    const imageError = validateImageBytes(buffer);
+    if (imageError) return { ok: false, message: imageError };
     imageDataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
   }
 

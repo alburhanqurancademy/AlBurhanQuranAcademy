@@ -33,8 +33,32 @@ export default function CoursesList() {
             </h2>
           </div>
 
-          {!loading && courses.length === 0 ? (
-            <p className="text-center text-gray-400 text-sm py-16">There are no active courses right now. Please check back soon!</p>
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" aria-busy="true" aria-label="Loading courses">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-[var(--color-surface)] rounded-2xl flex flex-col border-2 border-[var(--color-sky)]/20 animate-pulse"
+                >
+                  <div className="h-52 w-full rounded-t-2xl bg-[var(--color-black-soft)]" />
+                  <div className="p-6 flex flex-col gap-3 flex-1">
+                    <div className="h-6 w-3/4 rounded bg-[var(--color-black-soft)]" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-full rounded bg-[var(--color-black-soft)]" />
+                      <div className="h-3 w-full rounded bg-[var(--color-black-soft)]" />
+                      <div className="h-3 w-2/3 rounded bg-[var(--color-black-soft)]" />
+                    </div>
+                    <div className="flex gap-4 mt-1">
+                      <div className="h-3 w-16 rounded bg-[var(--color-black-soft)]" />
+                      <div className="h-3 w-20 rounded bg-[var(--color-black-soft)]" />
+                    </div>
+                    <div className="mt-4 h-9 w-28 rounded-lg bg-[var(--color-black-soft)]" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : courses.length === 0 ? (
+            <p className="text-center text-gray-400 text-lg font-semibold py-16">No Courses Available</p>
           ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses.map(({ image, title, slug, description, ageGroup, duration, classDuration }) => {
