@@ -15,6 +15,8 @@ interface CourseRow {
   ageGroup?: string;
   duration?: string;
   classDuration?: string;
+  detailHeading?: string;
+  detailText?: string;
   bullets?: string[];
   status: "active" | "inactive";
   createdAt: string;
@@ -248,7 +250,9 @@ function CourseModal({ course, onClose, onSaved }: { course?: CourseRow; onClose
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [preview, setPreview] = useState(course?.image ?? "");
 
-  // Step 2 — detail bullets
+  // Step 2 — detail heading, paragraph and bullets
+  const [detailHeading, setDetailHeading] = useState(course?.detailHeading ?? "");
+  const [detailText, setDetailText] = useState(course?.detailText ?? "");
   const [bullets, setBullets] = useState<string[]>(course?.bullets?.length ? course.bullets : [""]);
 
   const [saving, setSaving] = useState(false);
@@ -315,6 +319,8 @@ function CourseModal({ course, onClose, onSaved }: { course?: CourseRow; onClose
       formData.append("ageGroup", ageGroup.trim());
       formData.append("duration", duration.trim());
       formData.append("classDuration", classDuration.trim());
+      formData.append("detailHeading", detailHeading.trim());
+      formData.append("detailText", detailText.trim());
       formData.append("bullets", JSON.stringify(bullets.map((b) => b.trim()).filter(Boolean)));
       if (imageFile) formData.append("image", imageFile);
 
@@ -511,6 +517,29 @@ function CourseModal({ course, onClose, onSaved }: { course?: CourseRow; onClose
                 <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3">
                   <p className="text-gray-300 text-sm leading-relaxed">{description}</p>
                 </div>
+              </div>
+
+              {/* Heading + paragraph shown above the bullets */}
+              <div className="flex flex-col gap-1.5">
+                <label className={labelClass}>Heading</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Foundation of Islamic Beliefs"
+                  value={detailHeading}
+                  onChange={(e) => setDetailHeading(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className={labelClass}>Paragraph</label>
+                <textarea
+                  rows={3}
+                  placeholder="Short paragraph shown above the bullet points..."
+                  value={detailText}
+                  onChange={(e) => setDetailText(e.target.value)}
+                  className={`${inputClass} resize-none`}
+                />
               </div>
 
               {/* Bullets */}

@@ -9,6 +9,8 @@ const CourseSchema = new Schema(
     ageGroup:      { type: String, default: "" },
     duration:      { type: String, default: "" },
     classDuration: { type: String, default: "" },
+    detailHeading: { type: String, default: "" },
+    detailText:    { type: String, default: "" },
     bullets:       { type: [String], default: [] },
     level:         { type: String, enum: ["beginner", "intermediate", "advanced"], default: "beginner" },
     status:        { type: String, enum: ["active", "inactive"], default: "active" },

@@ -42,6 +42,8 @@ export type CourseFormResult =
       ageGroup: string;
       duration: string;
       classDuration: string;
+      detailHeading: string;
+      detailText: string;
       bullets: string[];
       imageDataUri: string | null;
     }
@@ -54,6 +56,8 @@ export async function parseCourseForm(formData: FormData): Promise<CourseFormRes
   const ageGroup = String(formData.get("ageGroup") ?? "").trim();
   const duration = String(formData.get("duration") ?? "").trim();
   const classDuration = String(formData.get("classDuration") ?? "").trim();
+  const detailHeading = String(formData.get("detailHeading") ?? "").trim();
+  const detailText = String(formData.get("detailText") ?? "").trim();
 
   if (!title) return { ok: false, message: "Course name is required" };
   if (!description) return { ok: false, message: "Description is required" };
@@ -83,5 +87,5 @@ export async function parseCourseForm(formData: FormData): Promise<CourseFormRes
     imageDataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
   }
 
-  return { ok: true, title, description, status, ageGroup, duration, classDuration, bullets, imageDataUri };
+  return { ok: true, title, description, status, ageGroup, duration, classDuration, detailHeading, detailText, bullets, imageDataUri };
 }

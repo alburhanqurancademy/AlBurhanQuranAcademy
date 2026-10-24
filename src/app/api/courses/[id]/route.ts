@@ -59,6 +59,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     course.ageGroup = parsed.ageGroup;
     course.duration = parsed.duration;
     course.classDuration = parsed.classDuration;
+    course.detailHeading = parsed.detailHeading;
+    course.detailText = parsed.detailText;
     course.set("bullets", parsed.bullets);
     if (parsed.imageDataUri) course.image = parsed.imageDataUri;
     await course.save();

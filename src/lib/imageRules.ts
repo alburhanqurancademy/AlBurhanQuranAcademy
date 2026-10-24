@@ -1,18 +1,11 @@
-// Upload rules for course and blog images. Shared by the admin forms (instant
-// feedback) and the API (the real enforcement — a client check can be bypassed).
-//
-// 1536 x 1024 (3:2) is the size the existing blog and course artwork was made
-// at; the cards crop it with object-cover, so uploads must match it exactly.
-export const IMAGE_WIDTH = 1536;
-export const IMAGE_HEIGHT = 1024;
-export const MAX_IMAGE_BYTES = 1024 * 1024;
-export const MAX_IMAGE_LABEL = "1 MB";
+// Upload rule for course and blog images: exact pixel size only. Shared by the
+// admin forms (instant feedback) and the API (the real enforcement — a client
+// check can be bypassed). 1200 x 630 is close to the shape the cards display
+// (about 1.9:1), so object-cover crops very little.
+export const IMAGE_WIDTH = 1200;
+export const IMAGE_HEIGHT = 630;
 
-export const IMAGE_RULE_TEXT = `${IMAGE_WIDTH} × ${IMAGE_HEIGHT} px, max ${MAX_IMAGE_LABEL}`;
-
-export function sizeMessage(bytes: number) {
-  return `Image is too large (${(bytes / (1024 * 1024)).toFixed(1)} MB). Maximum size is ${MAX_IMAGE_LABEL}.`;
-}
+export const IMAGE_RULE_TEXT = `${IMAGE_WIDTH} × ${IMAGE_HEIGHT} px`;
 
 export function dimensionMessage(width: number, height: number) {
   return `Image must be exactly ${IMAGE_WIDTH} × ${IMAGE_HEIGHT} px (yours is ${width} × ${height} px).`;
@@ -71,7 +64,6 @@ export function getImageDimensions(bytes: Uint8Array): { width: number; height: 
 
 // Server-side check. Returns an error message, or null when the image is fine.
 export function validateImageBytes(bytes: Uint8Array): string | null {
-  if (bytes.length > MAX_IMAGE_BYTES) return sizeMessage(bytes.length);
   const dims = getImageDimensions(bytes);
   if (!dims) return "Could not read the image. Please upload a valid JPG, PNG, WEBP or GIF.";
   if (dims.width !== IMAGE_WIDTH || dims.height !== IMAGE_HEIGHT) return dimensionMessage(dims.width, dims.height);
@@ -80,8 +72,6 @@ export function validateImageBytes(bytes: Uint8Array): string | null {
 
 // Browser-side check used by the admin forms. Returns an error message, or null.
 export function validateImageFile(file: File): Promise<string | null> {
-  if (file.size > MAX_IMAGE_BYTES) return Promise.resolve(sizeMessage(file.size));
-
   return new Promise((resolve) => {
     const url = URL.createObjectURL(file);
     const img = new Image();

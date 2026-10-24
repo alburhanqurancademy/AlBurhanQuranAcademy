@@ -7,10 +7,32 @@ import { parsePageParams, paginationMeta } from "@/lib/pagination";
 
 export const dynamic = "force-dynamic";
 
-// GET /api/courses — list courses with their enrollment totals, newest first.
-// Paginated when `page`/`pageSize` are given (the admin table); otherwise
-// returns the full list — the public site's course list/enroll modal depend
-// on getting every active course back in one call.
+// Course images are stored as base64 data URIs, which can be over a megabyte
+// each. The list never ships them: the query swaps a stored image for a flag
+// (so it isn't even transferred from MongoDB) and the response links to
+// /api/courses/[id]/image instead, which the browser can cache.
+const STRIP_STORED_IMAGE = {
+  $addFields: {
+    hasStoredImage: { $regexMatch: { input: "$image", regex: /^data:/ } },
+    image: { $cond: [{ $regexMatch: { input: "$image", regex: /^data:/ } }, "", "$image"] },
+  },
+};
+
+function withImageUrl(c: any) {
+  const { hasStoredImage, ...rest } = c;
+  return {
+    ...rest,
+    image: hasStoredImage
+      ? `/api/courses/${c._id}/image?v=${new Date(c.updatedAt).getTime()}`
+      : c.image ?? "",
+  };
+}
+
+// GET /api/courses — list courses, newest first.
+// Paginated, with enrollment totals, when `page`/`pageSize` are given (the
+// admin table). Otherwise it returns the full list without totals — the
+// public site's course list/enroll modal depend on getting every course back
+// in one call (`?status=active` narrows it to what visitors should see).
 export async function GET(req: NextRequest) {
   try {
     await connectDB();
@@ -18,9 +40,11 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const pageParams = parsePageParams(searchParams);
     const search = searchParams.get("search")?.trim() ?? "";
+    const status = searchParams.get("status");
 
     const filter: Record<string, unknown> = {};
     if (search) filter.title = new RegExp(escapeRegex(search), "i");
+    if (status === "active" || status === "inactive") filter.status = status;
 
     async function withEnrollmentCounts(courseDocs: any[]) {
       const counts = await Enrollment.aggregate([{ $group: { _id: "$course", count: { $sum: 1 } } }]);
@@ -34,18 +58,28 @@ export async function GET(req: NextRequest) {
     }
 
     if (!pageParams) {
-      const courses = await Course.find(filter).sort({ createdAt: -1 }).lean();
-      return NextResponse.json({ courses: await withEnrollmentCounts(courses) });
+      const courses = await Course.aggregate([
+        { $match: filter },
+        { $sort: { createdAt: -1 } },
+        STRIP_STORED_IMAGE,
+      ]);
+      return NextResponse.json({ courses: courses.map(withImageUrl) });
     }
 
     const { page, pageSize, skip } = pageParams;
     const [courses, total] = await Promise.all([
-      Course.find(filter).sort({ createdAt: -1 }).skip(skip).limit(pageSize).lean(),
+      Course.aggregate([
+        { $match: filter },
+        { $sort: { createdAt: -1 } },
+        { $skip: skip },
+        { $limit: pageSize },
+        STRIP_STORED_IMAGE,
+      ]),
       Course.countDocuments(filter),
     ]);
 
     return NextResponse.json({
-      courses: await withEnrollmentCounts(courses),
+      courses: await withEnrollmentCounts(courses.map(withImageUrl)),
       ...paginationMeta(total, page, pageSize),
     });
   } catch (error) {
@@ -86,6 +120,8 @@ export async function POST(req: NextRequest) {
       ageGroup: parsed.ageGroup,
       duration: parsed.duration,
       classDuration: parsed.classDuration,
+      detailHeading: parsed.detailHeading,
+      detailText: parsed.detailText,
       bullets: parsed.bullets,
       image: parsed.imageDataUri,
     });

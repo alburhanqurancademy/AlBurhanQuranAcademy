@@ -317,6 +317,17 @@ export default function EnrollModal({ open, selectedCourse, onClose }: Props) {
                         {/* Description */}
                         <p className="text-gray-400 text-sm leading-relaxed">{selected.description}</p>
 
+                        {/* Heading + paragraph above the bullets */}
+                        {selected.detailHeading && (
+                          <h4 className="flex items-center gap-2.5 text-white font-black text-base mt-1">
+                            <span className="w-1 h-5 rounded-full bg-[var(--color-accent)] shrink-0" />
+                            {selected.detailHeading}
+                          </h4>
+                        )}
+                        {selected.detailText && (
+                          <p className="text-gray-300 text-sm leading-relaxed">{selected.detailText}</p>
+                        )}
+
                         {/* Bullets */}
                         {selected.bullets && selected.bullets.length > 0 && (
                           <ul className="flex flex-col gap-2">
