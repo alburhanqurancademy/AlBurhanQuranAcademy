@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/mongodb";
 import { Blog } from "@/models/Blog";
+import { IMAGE_LIST_STAGES, withImageUrl } from "@/lib/imageStore";
 
 export interface BlogHadees {
   arabic?: string;
@@ -26,6 +27,10 @@ export interface BlogPost {
 }
 
 interface BlogDoc {
+  _id: unknown;
+  updatedAt?: Date;
+  // Set by IMAGE_LIST_STAGES: the document has an uploaded image to link to.
+  hasStoredImage?: boolean;
   slug: string;
   title: string;
   excerpt: string;
@@ -82,7 +87,7 @@ function mapDbPost(doc: BlogDoc): BlogPost {
     slug: doc.slug,
     title: doc.title,
     excerpt: doc.excerpt,
-    image: doc.image || "",
+    image: withImageUrl(doc, "/api/blogs").image,
     category: doc.category,
     writer: doc.writer || undefined,
     readTime: doc.readTime || "1 min read",
@@ -96,7 +101,11 @@ function mapDbPost(doc: BlogDoc): BlogPost {
 export async function getPublishedPosts(): Promise<BlogPost[]> {
   try {
     await connectDB();
-    const docs = await Blog.find({ status: "published" }).sort({ createdAt: -1 }).lean<BlogDoc[]>();
+    const docs = await Blog.aggregate<BlogDoc>([
+      { $match: { status: "published" } },
+      { $sort: { createdAt: -1 } },
+      ...IMAGE_LIST_STAGES,
+    ]);
     return docs.map(mapDbPost);
   } catch (error) {
     console.error("Failed to fetch published blogs", error);
@@ -107,7 +116,11 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
 export async function getPublishedPostBySlug(slug: string): Promise<BlogPost | undefined> {
   try {
     await connectDB();
-    const doc = await Blog.findOne({ slug, status: "published" }).lean<BlogDoc | null>();
+    const [doc] = await Blog.aggregate<BlogDoc>([
+      { $match: { slug, status: "published" } },
+      { $limit: 1 },
+      ...IMAGE_LIST_STAGES,
+    ]);
     return doc ? mapDbPost(doc) : undefined;
   } catch (error) {
     console.error("Failed to fetch blog by slug", error);

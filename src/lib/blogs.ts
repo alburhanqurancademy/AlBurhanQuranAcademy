@@ -1,6 +1,7 @@
 import { Blog } from "@/models/Blog";
 import { slugify, ALLOWED_IMAGE_TYPES } from "@/lib/courses";
 import { validateImageBytes } from "@/lib/imageRules";
+import type { StoredImage } from "@/lib/imageStore";
 
 export interface BlogHadeesInput {
   arabic: string;
@@ -50,7 +51,7 @@ export function computeReadTime(description: string, sections: BlogSectionInput[
 }
 
 export type BlogFormResult =
-  | { ok: true; data: BlogFormData; imageDataUri: string | null }
+  | { ok: true; data: BlogFormData; image: StoredImage | null }
   | { ok: false; message: string };
 
 export async function parseBlogForm(formData: FormData): Promise<BlogFormResult> {
@@ -104,7 +105,7 @@ export async function parseBlogForm(formData: FormData): Promise<BlogFormResult>
     });
   }
 
-  let imageDataUri: string | null = null;
+  let image: StoredImage | null = null;
   const file = formData.get("image");
   if (file instanceof File && file.size > 0) {
     if (!ALLOWED_IMAGE_TYPES.includes(file.type))
@@ -112,8 +113,8 @@ export async function parseBlogForm(formData: FormData): Promise<BlogFormResult>
     const buffer = Buffer.from(await file.arrayBuffer());
     const imageError = validateImageBytes(buffer);
     if (imageError) return { ok: false, message: imageError };
-    imageDataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
+    image = { data: buffer, contentType: file.type };
   }
 
-  return { ok: true, data: { title, excerpt, category, writer, status, sections }, imageDataUri };
+  return { ok: true, data: { title, excerpt, category, writer, status, sections }, image };
 }

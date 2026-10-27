@@ -1,4 +1,5 @@
 import mongoose, { Schema, models, model } from "mongoose";
+import { StoredImageSchema } from "@/models/StoredImage";
 
 // One Ayah/Hadees block: arabic + ref + translation, plus an optional free-text
 // note for context (tashreeh, explanation, etc.).
@@ -34,6 +35,9 @@ const BlogSchema = new Schema(
     title:    { type: String, required: true },
     slug:     { type: String, required: true, unique: true },
     excerpt:  { type: String, required: true },
+    // Uploaded image as binary; `image` is the legacy base64 data URI, cleared
+    // when a post is next saved with a new image (or by `npm run migrate:images`).
+    imageFile: { type: StoredImageSchema, select: false },
     image:    { type: String },
     category: { type: String, required: true },
     intro:    { type: String, default: "" },

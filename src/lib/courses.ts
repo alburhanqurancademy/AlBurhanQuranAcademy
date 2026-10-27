@@ -1,6 +1,7 @@
 import { getSession } from "@/lib/auth";
 import { Course } from "@/models/Course";
 import { validateImageBytes } from "@/lib/imageRules";
+import type { StoredImage } from "@/lib/imageStore";
 
 export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
@@ -45,7 +46,7 @@ export type CourseFormResult =
       detailHeading: string;
       detailText: string;
       bullets: string[];
-      imageDataUri: string | null;
+      image: StoredImage | null;
     }
   | { ok: false; message: string };
 
@@ -76,7 +77,7 @@ export async function parseCourseForm(formData: FormData): Promise<CourseFormRes
     return { ok: false, message: "Invalid course details data" };
   }
 
-  let imageDataUri: string | null = null;
+  let image: StoredImage | null = null;
   const file = formData.get("image");
   if (file instanceof File && file.size > 0) {
     if (!ALLOWED_IMAGE_TYPES.includes(file.type))
@@ -84,8 +85,8 @@ export async function parseCourseForm(formData: FormData): Promise<CourseFormRes
     const buffer = Buffer.from(await file.arrayBuffer());
     const imageError = validateImageBytes(buffer);
     if (imageError) return { ok: false, message: imageError };
-    imageDataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
+    image = { data: buffer, contentType: file.type };
   }
 
-  return { ok: true, title, description, status, ageGroup, duration, classDuration, detailHeading, detailText, bullets, imageDataUri };
+  return { ok: true, title, description, status, ageGroup, duration, classDuration, detailHeading, detailText, bullets, image };
 }

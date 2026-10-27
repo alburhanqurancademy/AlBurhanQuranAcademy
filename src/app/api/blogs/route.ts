@@ -4,8 +4,11 @@ import { Blog } from "@/models/Blog";
 import { requireAdmin, escapeRegex } from "@/lib/courses";
 import { parseBlogForm, generateUniqueBlogSlug, computeReadTime } from "@/lib/blogs";
 import { parsePageParams, paginationMeta } from "@/lib/pagination";
+import { IMAGE_LIST_STAGES, withImageUrl, singleWithImageUrl } from "@/lib/imageStore";
 
 export const dynamic = "force-dynamic";
+
+const blogWithImageUrl = (b: any) => withImageUrl(b, "/api/blogs");
 
 // GET /api/blogs — list blogs, newest first. Paginated when `page`/`pageSize`
 // are given (the admin table); otherwise returns the full list unfiltered,
@@ -23,19 +26,35 @@ export async function GET(req: NextRequest) {
     if (search) filter.title = new RegExp(escapeRegex(search), "i");
     if (category) filter.category = category;
 
+    // Images are dropped from the query and replaced by a cacheable
+    // /api/blogs/[id]/image link, so the list stays small.
     if (!pageParams) {
-      const blogs = await Blog.find(filter).sort({ createdAt: -1 }).lean();
-      return NextResponse.json({ blogs });
+      const blogs = await Blog.aggregate([
+        { $match: filter },
+        { $sort: { createdAt: -1 } },
+        ...IMAGE_LIST_STAGES,
+      ]);
+      return NextResponse.json({ blogs: blogs.map(blogWithImageUrl) });
     }
 
     const { page, pageSize, skip } = pageParams;
     const [blogs, total, categories] = await Promise.all([
-      Blog.find(filter).sort({ createdAt: -1 }).skip(skip).limit(pageSize).lean(),
+      Blog.aggregate([
+        { $match: filter },
+        { $sort: { createdAt: -1 } },
+        { $skip: skip },
+        { $limit: pageSize },
+        ...IMAGE_LIST_STAGES,
+      ]),
       Blog.countDocuments(filter),
       Blog.distinct("category"),
     ]);
 
-    return NextResponse.json({ blogs, categories, ...paginationMeta(total, page, pageSize) });
+    return NextResponse.json({
+      blogs: blogs.map(blogWithImageUrl),
+      categories,
+      ...paginationMeta(total, page, pageSize),
+    });
   } catch (error) {
     console.error("Failed to fetch blogs", error);
     return NextResponse.json({ message: "Failed to fetch blogs" }, { status: 500 });
@@ -53,7 +72,7 @@ export async function POST(req: NextRequest) {
     if (!parsed.ok)
       return NextResponse.json({ message: parsed.message }, { status: 400 });
 
-    if (!parsed.imageDataUri)
+    if (!parsed.image)
       return NextResponse.json({ message: "Blog image is required" }, { status: 400 });
 
     await connectDB();
@@ -69,11 +88,14 @@ export async function POST(req: NextRequest) {
     const blog = await Blog.create({
       ...parsed.data,
       slug,
-      image: parsed.imageDataUri,
+      imageFile: parsed.image,
       readTime: computeReadTime(parsed.data.excerpt, parsed.data.sections),
     });
 
-    return NextResponse.json({ message: "Blog created", blog }, { status: 201 });
+    return NextResponse.json(
+      { message: "Blog created", blog: singleWithImageUrl(blog, "/api/blogs") },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Failed to create blog", error);
     return NextResponse.json({ message: "Failed to create blog" }, { status: 500 });

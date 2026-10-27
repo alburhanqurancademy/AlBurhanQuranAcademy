@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Course } from "@/models/Course";
 import { requireAdmin, parseCourseForm, escapeRegex } from "@/lib/courses";
+import { singleWithImageUrl } from "@/lib/imageStore";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!course)
       return NextResponse.json({ message: "Course not found" }, { status: 404 });
 
-    return NextResponse.json({ course });
+    return NextResponse.json({ course: singleWithImageUrl(course, "/api/courses") });
   } catch (error) {
     console.error("Failed to fetch course", error);
     return NextResponse.json({ message: "Failed to fetch course" }, { status: 500 });
@@ -62,10 +63,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     course.detailHeading = parsed.detailHeading;
     course.detailText = parsed.detailText;
     course.set("bullets", parsed.bullets);
-    if (parsed.imageDataUri) course.image = parsed.imageDataUri;
+    if (parsed.image) {
+      course.set("imageFile", parsed.image);
+      course.set("image", undefined); // drop any legacy base64 copy
+    }
     await course.save();
 
-    return NextResponse.json({ message: "Course updated", course });
+    return NextResponse.json({ message: "Course updated", course: singleWithImageUrl(course, "/api/courses") });
   } catch (error) {
     console.error("Failed to update course", error);
     return NextResponse.json({ message: "Failed to update course" }, { status: 500 });

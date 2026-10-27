@@ -4,29 +4,15 @@ import { Course } from "@/models/Course";
 import { Enrollment } from "@/models/Enrollment";
 import { requireAdmin, parseCourseForm, generateUniqueSlug, escapeRegex } from "@/lib/courses";
 import { parsePageParams, paginationMeta } from "@/lib/pagination";
+import { IMAGE_LIST_STAGES, withImageUrl, singleWithImageUrl } from "@/lib/imageStore";
 
 export const dynamic = "force-dynamic";
 
-// Course images are stored as base64 data URIs, which can be over a megabyte
-// each. The list never ships them: the query swaps a stored image for a flag
-// (so it isn't even transferred from MongoDB) and the response links to
-// /api/courses/[id]/image instead, which the browser can cache.
-const STRIP_STORED_IMAGE = {
-  $addFields: {
-    hasStoredImage: { $regexMatch: { input: "$image", regex: /^data:/ } },
-    image: { $cond: [{ $regexMatch: { input: "$image", regex: /^data:/ } }, "", "$image"] },
-  },
-};
-
-function withImageUrl(c: any) {
-  const { hasStoredImage, ...rest } = c;
-  return {
-    ...rest,
-    image: hasStoredImage
-      ? `/api/courses/${c._id}/image?v=${new Date(c.updatedAt).getTime()}`
-      : c.image ?? "",
-  };
-}
+// Course images are stored as binary and can be over a megabyte each. The list
+// never ships them: the query drops the bytes (so they aren't even transferred
+// from MongoDB) and the response links to /api/courses/[id]/image instead,
+// which the browser can cache.
+const courseWithImageUrl = (c: any) => withImageUrl(c, "/api/courses");
 
 // GET /api/courses — list courses, newest first.
 // Paginated, with enrollment totals, when `page`/`pageSize` are given (the
@@ -61,9 +47,9 @@ export async function GET(req: NextRequest) {
       const courses = await Course.aggregate([
         { $match: filter },
         { $sort: { createdAt: -1 } },
-        STRIP_STORED_IMAGE,
+        ...IMAGE_LIST_STAGES,
       ]);
-      return NextResponse.json({ courses: courses.map(withImageUrl) });
+      return NextResponse.json({ courses: courses.map(courseWithImageUrl) });
     }
 
     const { page, pageSize, skip } = pageParams;
@@ -73,13 +59,13 @@ export async function GET(req: NextRequest) {
         { $sort: { createdAt: -1 } },
         { $skip: skip },
         { $limit: pageSize },
-        STRIP_STORED_IMAGE,
+        ...IMAGE_LIST_STAGES,
       ]),
       Course.countDocuments(filter),
     ]);
 
     return NextResponse.json({
-      courses: await withEnrollmentCounts(courses.map(withImageUrl)),
+      courses: await withEnrollmentCounts(courses.map(courseWithImageUrl)),
       ...paginationMeta(total, page, pageSize),
     });
   } catch (error) {
@@ -99,7 +85,7 @@ export async function POST(req: NextRequest) {
     if (!parsed.ok)
       return NextResponse.json({ message: parsed.message }, { status: 400 });
 
-    if (!parsed.imageDataUri)
+    if (!parsed.image)
       return NextResponse.json({ message: "Course image is required" }, { status: 400 });
 
     await connectDB();
@@ -123,10 +109,13 @@ export async function POST(req: NextRequest) {
       detailHeading: parsed.detailHeading,
       detailText: parsed.detailText,
       bullets: parsed.bullets,
-      image: parsed.imageDataUri,
+      imageFile: parsed.image,
     });
 
-    return NextResponse.json({ message: "Course created", course }, { status: 201 });
+    return NextResponse.json(
+      { message: "Course created", course: singleWithImageUrl(course, "/api/courses") },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Failed to create course", error);
     return NextResponse.json({ message: "Failed to create course" }, { status: 500 });

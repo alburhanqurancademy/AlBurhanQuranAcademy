@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Blog } from "@/models/Blog";
 import { requireAdmin, escapeRegex } from "@/lib/courses";
 import { parseBlogForm, computeReadTime } from "@/lib/blogs";
+import { singleWithImageUrl } from "@/lib/imageStore";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!blog)
       return NextResponse.json({ message: "Blog not found" }, { status: 404 });
 
-    return NextResponse.json({ blog });
+    return NextResponse.json({ blog: singleWithImageUrl(blog, "/api/blogs") });
   } catch (error) {
     console.error("Failed to fetch blog", error);
     return NextResponse.json({ message: "Failed to fetch blog" }, { status: 500 });
@@ -64,10 +65,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     blog.intro = "";
     blog.set("sections", parsed.data.sections);
     blog.readTime = computeReadTime(parsed.data.excerpt, parsed.data.sections);
-    if (parsed.imageDataUri) blog.image = parsed.imageDataUri;
+    if (parsed.image) {
+      blog.set("imageFile", parsed.image);
+      blog.set("image", undefined); // drop any legacy base64 copy
+    }
     await blog.save();
 
-    return NextResponse.json({ message: "Blog updated", blog });
+    return NextResponse.json({ message: "Blog updated", blog: singleWithImageUrl(blog, "/api/blogs") });
   } catch (error) {
     console.error("Failed to update blog", error);
     return NextResponse.json({ message: "Failed to update blog" }, { status: 500 });

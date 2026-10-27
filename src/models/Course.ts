@@ -1,10 +1,14 @@
 import mongoose, { Schema, models, model } from "mongoose";
+import { StoredImageSchema } from "@/models/StoredImage";
 
 const CourseSchema = new Schema(
   {
     title:         { type: String, required: true },
     slug:          { type: String, required: true, unique: true },
     description:   { type: String, required: true },
+    // Uploaded image as binary; `image` is the legacy base64 data URI, cleared
+    // when a course is next saved with a new image (or by `npm run migrate:images`).
+    imageFile:     { type: StoredImageSchema, select: false },
     image:         { type: String },
     ageGroup:      { type: String, default: "" },
     duration:      { type: String, default: "" },
