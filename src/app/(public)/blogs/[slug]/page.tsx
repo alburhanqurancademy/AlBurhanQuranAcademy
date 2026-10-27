@@ -30,11 +30,11 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
   return (
     <>
-      <div className="relative w-full h-[50vh] min-h-[340px] overflow-hidden bg-[var(--color-black-soft)]">
+      <div className="relative w-full h-[60vh] min-h-[420px] overflow-hidden bg-[var(--color-black-soft)]">
         {/* Plain <img>: admin-uploaded blog images are data URIs, unsupported by next/image */}
         {post.image && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
+          <img src={post.image} alt={post.title} className="absolute inset-0 w-full h-full object-cover object-top" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-black)] via-black/60 to-black/30" />
         <div className="absolute inset-0 flex items-end">
