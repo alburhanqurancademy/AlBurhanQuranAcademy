@@ -2,19 +2,25 @@ import { Blog } from "@/models/Blog";
 import { slugify, ALLOWED_IMAGE_TYPES } from "@/lib/courses";
 import { validateImageBytes } from "@/lib/imageRules";
 
+export interface BlogHadeesInput {
+  arabic: string;
+  arabicRef: string;
+  translation: string;
+  note: string;
+}
+
 export interface BlogSectionInput {
   heading?: string;
   body: string;
   list?: string[];
-  arabic?: string;
-  arabicRef?: string;
-  translation?: string;
+  hadees?: BlogHadeesInput[];
 }
 
 export interface BlogFormData {
   title: string;
   excerpt: string;
   category: string;
+  writer: string;
   status: "draft" | "published";
   sections: BlogSectionInput[];
 }
@@ -32,7 +38,12 @@ export async function generateUniqueBlogSlug(title: string) {
 export function computeReadTime(description: string, sections: BlogSectionInput[]) {
   const text = [
     description,
-    ...sections.flatMap((s) => [s.heading ?? "", s.body, ...(s.list ?? []), s.translation ?? ""]),
+    ...sections.flatMap((s) => [
+      s.heading ?? "",
+      s.body,
+      ...(s.list ?? []),
+      ...(s.hadees ?? []).flatMap((h) => [h.translation, h.note]),
+    ]),
   ].join(" ");
   const words = text.trim().split(/\s+/).filter(Boolean).length;
   return `${Math.max(1, Math.round(words / 200))} min read`;
@@ -47,6 +58,7 @@ export async function parseBlogForm(formData: FormData): Promise<BlogFormResult>
   const excerpt = String(formData.get("excerpt") ?? "").trim();
   const category = String(formData.get("category") ?? "").trim();
   const status = String(formData.get("status") ?? "published").trim();
+  const writer = String(formData.get("writer") ?? "").trim();
 
   if (!title) return { ok: false, message: "Blog heading is required" };
   if (!excerpt) return { ok: false, message: "Description is required" };
@@ -72,13 +84,23 @@ export async function parseBlogForm(formData: FormData): Promise<BlogFormResult>
       ? (raw.list as unknown[]).map((i) => String(i).trim()).filter(Boolean)
       : [];
 
+    // Drop empty blocks so a stray "Add Ayah / Hadees" click doesn't render a hollow card.
+    const hadees = Array.isArray(raw?.hadees)
+      ? (raw.hadees as Record<string, unknown>[])
+          .map((h) => ({
+            arabic: String(h?.arabic ?? "").trim(),
+            arabicRef: String(h?.arabicRef ?? "").trim(),
+            translation: String(h?.translation ?? "").trim(),
+            note: String(h?.note ?? "").trim(),
+          }))
+          .filter((h) => h.arabic || h.translation || h.note)
+      : [];
+
     sections.push({
       heading: String(raw?.heading ?? "").trim(),
       body,
       list: list.length > 0 ? list : undefined,
-      arabic: String(raw?.arabic ?? "").trim(),
-      arabicRef: String(raw?.arabicRef ?? "").trim(),
-      translation: String(raw?.translation ?? "").trim(),
+      hadees: hadees.length > 0 ? hadees : undefined,
     });
   }
 
@@ -93,5 +115,5 @@ export async function parseBlogForm(formData: FormData): Promise<BlogFormResult>
     imageDataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
   }
 
-  return { ok: true, data: { title, excerpt, category, status, sections }, imageDataUri };
+  return { ok: true, data: { title, excerpt, category, writer, status, sections }, imageDataUri };
 }

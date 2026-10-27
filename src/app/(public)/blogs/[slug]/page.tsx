@@ -79,15 +79,27 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                     ))}
                   </ul>
                 )}
-                {section.arabic && (
-                  <div className="rounded-2xl border border-[var(--color-sky)]/30 bg-[var(--color-sky)]/5 px-6 py-6 flex flex-col gap-3">
-                    <p className="arabic text-2xl text-white text-right leading-loose">{section.arabic}</p>
-                    {section.arabicRef && <p className="text-[var(--color-sky)] text-xs font-semibold text-right">﴾ {section.arabicRef} ﴿</p>}
-                    {section.translation && <p className="text-gray-400 text-sm leading-relaxed italic border-t border-[var(--color-border)] pt-3">&ldquo;{section.translation}&rdquo;</p>}
+                {section.hadees?.map((h, k) => (
+                  <div key={k} className="flex flex-col gap-4">
+                    <div className="rounded-2xl border border-[var(--color-sky)]/30 bg-[var(--color-sky)]/5 px-6 py-6 flex flex-col gap-3">
+                      {h.arabic && <p className="arabic text-2xl text-white text-right leading-loose">{h.arabic}</p>}
+                      {h.arabicRef && <p className="text-[var(--color-sky)] text-xs font-semibold text-right">﴾ {h.arabicRef} ﴿</p>}
+                      {h.translation && <p className="text-gray-400 text-sm leading-relaxed italic border-t border-[var(--color-border)] pt-3">&ldquo;{h.translation}&rdquo;</p>}
+                    </div>
+                    {h.note && (
+                      <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-line">{h.note}</p>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
             ))}
+
+            {post.writer && (
+              <div className="self-end text-right flex flex-col gap-0.5">
+                <span className="text-gray-500 text-xs font-bold uppercase tracking-widest not-italic">Written by</span>
+                <p className="italic text-[var(--color-accent)] text-lg font-serif">{post.writer}</p>
+              </div>
+            )}
 
             <div className="mt-4 rounded-2xl border border-[var(--color-border)] bg-gradient-to-r from-[var(--color-green)]/20 via-[var(--color-surface)] to-[var(--color-accent)]/10 px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-5">
               <div>

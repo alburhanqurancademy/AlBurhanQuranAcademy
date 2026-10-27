@@ -57,6 +57,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     blog.title = parsed.data.title;
     blog.excerpt = parsed.data.excerpt;
     blog.category = parsed.data.category;
+    blog.writer = parsed.data.writer;
     blog.status = parsed.data.status;
     // Clear any legacy intro so the description reliably becomes the article
     // opening once a post is saved through the current editor.

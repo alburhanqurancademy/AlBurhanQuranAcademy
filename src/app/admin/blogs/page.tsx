@@ -6,10 +6,19 @@ import ConfirmDeleteModal from "@/components/admin/ConfirmDeleteModal";
 import TableSkeleton from "@/components/admin/TableSkeleton";
 import { IMAGE_RULE_TEXT, validateImageFile } from "@/lib/imageRules";
 
+interface HadeesForm {
+  arabic: string;
+  arabicRef: string;
+  translation: string;
+  note: string;
+}
+
 interface BlogSection {
   heading?: string;
   body: string;
   list?: string[];
+  hadees?: Partial<HadeesForm>[];
+  // Legacy single-block shape (posts saved before multiple blocks existed).
   arabic?: string;
   arabicRef?: string;
   translation?: string;
@@ -22,6 +31,7 @@ interface BlogRow {
   excerpt: string;
   image?: string;
   category: string;
+  writer?: string;
   sections: BlogSection[];
   readTime: string;
   status: "draft" | "published";
@@ -32,10 +42,7 @@ interface SectionForm {
   heading: string;
   body: string;
   bullets: string[];
-  hadees: boolean;
-  arabic: string;
-  arabicRef: string;
-  translation: string;
+  hadees: HadeesForm[];
 }
 
 const CATEGORY_SUGGESTIONS = ["Spirituality", "Online Learning", "Faith & Guidance", "Islamic Knowledge"];
@@ -54,8 +61,21 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+function emptyHadees(): HadeesForm {
+  return { arabic: "", arabicRef: "", translation: "", note: "" };
+}
+
 function emptySection(): SectionForm {
-  return { heading: "", body: "", bullets: [], hadees: false, arabic: "", arabicRef: "", translation: "" };
+  return { heading: "", body: "", bullets: [], hadees: [] };
+}
+
+function sectionToForm(s: BlogSection): SectionForm {
+  const hadees: HadeesForm[] = s.hadees?.length
+    ? s.hadees.map((h) => ({ ...emptyHadees(), ...h }))
+    : s.arabic || s.translation
+      ? [{ arabic: s.arabic ?? "", arabicRef: s.arabicRef ?? "", translation: s.translation ?? "", note: "" }]
+      : [];
+  return { heading: s.heading ?? "", body: s.body, bullets: s.list ?? [], hadees };
 }
 
 export default function AdminBlogsPage() {
@@ -284,18 +304,9 @@ function BlogModal({ blog, onClose, onSaved }: { blog?: BlogRow; onClose: () => 
 
   // Step 2 — article content
   const [sections, setSections] = useState<SectionForm[]>(
-    blog?.sections?.length
-      ? blog.sections.map((s) => ({
-          heading: s.heading ?? "",
-          body: s.body,
-          bullets: s.list ?? [],
-          hadees: Boolean(s.arabic || s.translation),
-          arabic: s.arabic ?? "",
-          arabicRef: s.arabicRef ?? "",
-          translation: s.translation ?? "",
-        }))
-      : [emptySection()]
+    blog?.sections?.length ? blog.sections.map(sectionToForm) : [emptySection()]
   );
+  const [writer, setWriter] = useState(blog?.writer ?? "");
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -326,6 +337,13 @@ function BlogModal({ blog, onClose, onSaved }: { blog?: BlogRow; onClose: () => 
 
   const updateSection = (i: number, patch: Partial<SectionForm>) =>
     setSections((prev) => prev.map((s, idx) => (idx === i ? { ...s, ...patch } : s)));
+
+  const updateHadees = (i: number, k: number, patch: Partial<HadeesForm>) =>
+    setSections((prev) =>
+      prev.map((s, idx) =>
+        idx === i ? { ...s, hadees: s.hadees.map((h, hk) => (hk === k ? { ...h, ...patch } : h)) } : s
+      )
+    );
 
   const removeSection = (i: number) =>
     setSections((prev) => prev.filter((_, idx) => idx !== i));
@@ -379,6 +397,7 @@ function BlogModal({ blog, onClose, onSaved }: { blog?: BlogRow; onClose: () => 
       formData.append("excerpt", excerpt.trim());
       formData.append("category", category.trim());
       formData.append("status", status);
+      formData.append("writer", writer.trim());
       formData.append(
         "sections",
         JSON.stringify(
@@ -386,9 +405,12 @@ function BlogModal({ blog, onClose, onSaved }: { blog?: BlogRow; onClose: () => 
             heading: s.heading.trim(),
             body: s.body.trim(),
             list: s.bullets.map((b) => b.trim()).filter(Boolean),
-            arabic: s.hadees ? s.arabic.trim() : "",
-            arabicRef: s.hadees ? s.arabicRef.trim() : "",
-            translation: s.hadees ? s.translation.trim() : "",
+            hadees: s.hadees.map((h) => ({
+              arabic: h.arabic.trim(),
+              arabicRef: h.arabicRef.trim(),
+              translation: h.translation.trim(),
+              note: h.note.trim(),
+            })),
           }))
         )
       );
@@ -569,7 +591,7 @@ function BlogModal({ blog, onClose, onSaved }: { blog?: BlogRow; onClose: () => 
               <div className="flex flex-col gap-1.5">
                 <label className={labelClass}>Article Sections</label>
                 <p className="text-gray-500 text-xs -mt-0.5">
-                  Each section has a heading and description, with optional bullets and an optional Ayah / Hadees block.
+                  Each section has a heading and description, with optional bullets and any number of Ayah / Hadees blocks.
                 </p>
               </div>
 
@@ -659,43 +681,65 @@ function BlogModal({ blog, onClose, onSaved }: { blog?: BlogRow; onClose: () => 
                     </button>
                   </div>
 
-                  <label className="flex items-center gap-2.5 cursor-pointer select-none w-fit">
-                    <input
-                      type="checkbox"
-                      checked={s.hadees}
-                      onChange={(e) => updateSection(i, { hadees: e.target.checked })}
-                      className="w-4 h-4 accent-[var(--color-accent)]"
-                    />
-                    <span className="text-gray-300 text-xs font-semibold">Include Ayah / Hadees (optional)</span>
-                  </label>
-
-                  {s.hadees && (
-                    <div className="flex flex-col gap-3 rounded-xl border border-[var(--color-sky)]/30 bg-[var(--color-sky)]/5 p-3.5">
-                      <textarea
-                        rows={2}
-                        dir="rtl"
-                        placeholder="النص العربي..."
-                        value={s.arabic}
-                        onChange={(e) => updateSection(i, { arabic: e.target.value })}
-                        className={`${inputClass} resize-y text-right text-base`}
-                      />
-                      <input
-                        type="text"
-                        dir="rtl"
-                        placeholder="المرجع — e.g. الرعد: 28"
-                        value={s.arabicRef}
-                        onChange={(e) => updateSection(i, { arabicRef: e.target.value })}
-                        className={`${inputClass} text-right`}
-                      />
-                      <textarea
-                        rows={2}
-                        placeholder="English translation..."
-                        value={s.translation}
-                        onChange={(e) => updateSection(i, { translation: e.target.value })}
-                        className={`${inputClass} resize-y`}
-                      />
-                    </div>
-                  )}
+                  {/* Ayah / Hadees blocks */}
+                  <div className="flex flex-col gap-3">
+                    <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Ayah / Hadees (optional)</span>
+                    {s.hadees.map((h, k) => (
+                      <div key={k} className="flex flex-col gap-3 rounded-xl border border-[var(--color-sky)]/30 bg-[var(--color-sky)]/5 p-3.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[var(--color-sky)] text-xs font-bold uppercase tracking-widest">Ayah / Hadees {k + 1}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateSection(i, { hadees: s.hadees.filter((_, hk) => hk !== k) })}
+                            title="Remove Ayah / Hadees"
+                            className="p-1 text-gray-500 hover:text-red-400 transition-colors"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                        <textarea
+                          rows={2}
+                          dir="rtl"
+                          placeholder="النص العربي..."
+                          value={h.arabic}
+                          onChange={(e) => updateHadees(i, k, { arabic: e.target.value })}
+                          className={`${inputClass} resize-y text-right text-base`}
+                        />
+                        <input
+                          type="text"
+                          dir="rtl"
+                          placeholder="المرجع — e.g. الرعد: 28"
+                          value={h.arabicRef}
+                          onChange={(e) => updateHadees(i, k, { arabicRef: e.target.value })}
+                          className={`${inputClass} text-right`}
+                        />
+                        <textarea
+                          rows={2}
+                          placeholder="English translation..."
+                          value={h.translation}
+                          onChange={(e) => updateHadees(i, k, { translation: e.target.value })}
+                          className={`${inputClass} resize-y`}
+                        />
+                        <textarea
+                          rows={3}
+                          placeholder="Context / Tashreeh / explanation (optional)..."
+                          value={h.note}
+                          onChange={(e) => updateHadees(i, k, { note: e.target.value })}
+                          className={`${inputClass} resize-y`}
+                        />
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => updateSection(i, { hadees: [...s.hadees, emptyHadees()] })}
+                      className="flex items-center gap-1.5 w-fit px-3 py-1.5 rounded-lg border border-dashed border-[var(--color-border)] text-gray-400 hover:text-white hover:border-[var(--color-sky)]/50 text-xs font-semibold transition-all"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+                      Add Ayah / Hadees
+                    </button>
+                  </div>
                 </div>
               ))}
 
@@ -707,6 +751,19 @@ function BlogModal({ blog, onClose, onSaved }: { blog?: BlogRow; onClose: () => 
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
                 Add Section
               </button>
+
+              {/* Writer — shown italic, bottom-right, after the last section */}
+              <div className="flex flex-col gap-1.5">
+                <label className={labelClass}>Writer (optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Ustadh Ahmed Khan"
+                  value={writer}
+                  onChange={(e) => setWriter(e.target.value)}
+                  className={inputClass}
+                />
+                <p className="text-gray-500 text-xs">Shown in italics at the bottom-right, after the last section.</p>
+              </div>
             </div>
           )}
         </div>
